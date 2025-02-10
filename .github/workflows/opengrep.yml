@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: OpenGrep
+name: Opengrep
 
 on:
   push:
@@ -20,20 +20,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "Download / Install OpenGrep"
+      - name: "Download / Install Opengrep"
         env:
           RELEASE_VERSION: v1.0.0-alpha.11
 
         run: |
           set -e
 
-          echo "[+] Downloading OpenGrep"
+          echo "[+] Downloading Opengrep"
           curl -sSfL \
             -o "/usr/local/bin/opengrep" \
             "https://github.com/opengrep/opengrep/releases/download/${RELEASE_VERSION}/opengrep_manylinux_x86"
           chmod +x /usr/local/bin/opengrep
 
-      - name: "Run OpenGrep"
+      - name: "Run Opengrep"
         run: opengrep scan --metrics=off --sarif-output ./results.sarif .
 
       - name: "Upload SARIF file"
