@@ -1,0 +1,43 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: OpenGrep
+
+on:
+  push:
+    branches: [ "3.0.x" ]
+  pull_request:
+    branches: [ "3.0.x" ]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Download / Install OpenGrep"
+        env:
+          RELEASE_VERSION: v1.0.0-alpha.11
+
+        run: |
+          set -e
+
+          echo "[+] Downloading OpenGrep"
+          curl -sSfL \
+            -o "/usr/local/bin/opengrep" \
+            "https://github.com/opengrep/opengrep/releases/download/${RELEASE_VERSION}/opengrep_manylinux_x86"
+          chmod +x /usr/local/bin/opengrep
+
+      - name: "Run OpenGrep"
+        run: opengrep scan --sarif-output=sarif.json -f rules code
+
+      - name: "Upload SARIF file"
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
